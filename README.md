@@ -93,10 +93,6 @@ hs.hotkey.bind({"ctrl","alt","cmd"}, "K", function() adjustOutlookFontSize(0) en
 * **Slider not moving?** Use the Accessibility Inspector to confirm the number of `right` key presses needed to reach the Fonts tab.
 * **Delays too short/long?** Increase or decrease `usleep` durations to match your machine’s responsiveness.
 
-## Contribution
-
-Contributions and bug reports are welcome! Feel free to open an issue or submit a pull request.
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
