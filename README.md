@@ -1,3 +1,9 @@
+> **Deprecated**  
+> This repository is no longer maintained.  
+> Please see our new, actively-maintained version here:  
+> 👉 [outlook-for-mac-fontsize-shortcuts](https://github.com/sebastianspicker/outlook-for-mac-fontsize-shortcuts))
+> 
+
 # Outlook Legacy Font Size Hotkeys with Hammerspoon
 
 This project provides a simple, user-friendly way to control the font size in Outlook for Mac (Legacy) using global keyboard shortcuts. It leverages [Hammerspoon](https://www.hammerspoon.org/) to simulate UI interactions and adjust the in-app font slider, giving users a quick two-key shortcut for "Larger" and "Standard" font sizes without digging through menus.
