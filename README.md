@@ -1,7 +1,7 @@
 > **Deprecated**  
 > This repository is no longer maintained.  
 > Please see our new, actively-maintained version here:  
-> 👉 [outlook-for-mac-fontsize-shortcuts](https://github.com/sebastianspicker/outlook-for-mac-fontsize-shortcuts))
+> [outlook-for-mac-fontsize-shortcuts](https://github.com/sebastianspicker/outlook-for-mac-fontsize-shortcuts))
 > 
 
 # Outlook Legacy Font Size Hotkeys with Hammerspoon
