@@ -1,7 +1,7 @@
 > **Deprecated**  
 > This repository is no longer maintained.  
 > Please see our new, actively-maintained version here:  
-> [outlook-for-mac-fontsize-shortcuts](https://github.com/sebastianspicker/outlook-for-mac-fontsize-shortcuts))
+> [outlook-for-mac-fontsize-shortcuts](https://github.com/sebastianspicker/outlook-for-mac-fontsize-shortcuts)
 > 
 
 # Outlook Legacy Font Size Hotkeys with Hammerspoon
@@ -46,51 +46,40 @@ This sequence is wrapped in a reusable Lua function, and bound to two hotkeys:
 1. **Clone** this repository:
 
    ```bash
-   git clone https://github.com/your-org/outlook-font-shortcuts.git
-   cd outlook-font-shortcuts
+   git clone https://github.com/sebastianspicker/outlook-legacy-fontsize-shortcuts.git
+   cd outlook-legacy-fontsize-shortcuts
    ```
-2. **Copy** the `init.lua` snippet into your Hammerspoon config folder:
+2. **Copy** the config into your Hammerspoon config folder:
 
    ```bash
-   cp init.lua ~/.hammerspoon/init.lua
+   cp init.lua outlook_legacy_fontsize.lua ~/.hammerspoon/
    ```
 3. **Reload** Hammerspoon config:
    Press `Ctrl + Cmd + R` or click the Hammerspoon icon and choose *Reload Config*.
 
 ## Configuration
 
-* **Adjust `rightArrowCount`** if your Outlook Preferences tabs differ in order.
-* **Tweak `hs.timer.usleep` delays** if your system is slower or faster.
+* **Adjust `right_arrow_count`** in `init.lua` if your Outlook Preferences tabs differ in order.
+* **Tweak `delays_us`** in `init.lua` if your system is slower or faster.
 * **Verify** tab labels and slider behavior with the macOS Accessibility Inspector if needed.
 
 ## How It Works
 
 ```lua
-function adjustOutlookFontSize(targetPosition)
-  hs.application.launchOrFocus("Microsoft Outlook")
-  hs.timer.waitUntil(
-    function()
-      local front = hs.application.frontmostApplication()
-      return front and front:name() == "Microsoft Outlook"
-    end, nil, 5
-  )
-  hs.eventtap.keyStroke({"cmd"}, ",")
-  hs.timer.usleep(700000)
-  for i = 1, rightArrowCount do
-    hs.eventtap.keyStroke({}, "right")
-    hs.timer.usleep(150000)
-  end
-  hs.eventtap.keyStroke({"ctrl"}, tostring(targetPosition))
-  hs.timer.usleep(200000)
-  hs.eventtap.keyStroke({"cmd"}, "w")
-end
+local outlook = require("outlook_legacy_fontsize")
 
-hs.hotkey.bind({"ctrl","alt","cmd"}, "G", function() adjustOutlookFontSize(2) end)
-hs.hotkey.bind({"ctrl","alt","cmd"}, "K", function() adjustOutlookFontSize(0) end)
+outlook.setup({
+  right_arrow_count = 2,
+  delays_us = {
+    prefs_open = 700000,
+    arrow = 150000,
+    slider_set = 200000,
+  },
+})
 ```
 
-1. **`adjustOutlookFontSize`**: Core function that runs the UI script.
-2. **`rightArrowCount`**: Set at top of `init.lua` for tab navigation.
+1. **`outlook_legacy_fontsize.lua`**: Core module that runs the UI script.
+2. **`right_arrow_count`**: Set in `init.lua` for tab navigation.
 3. **Hotkeys**: Two distinct bindings for the two slider positions.
 
 ## Troubleshooting
@@ -98,6 +87,24 @@ hs.hotkey.bind({"ctrl","alt","cmd"}, "K", function() adjustOutlookFontSize(0) en
 * **Hotkeys not working?** Verify that Hammerspoon is running and has Accessibility permission.
 * **Slider not moving?** Use the Accessibility Inspector to confirm the number of `right` key presses needed to reach the Fonts tab.
 * **Delays too short/long?** Increase or decrease `usleep` durations to match your machine’s responsiveness.
+
+## Development
+
+```bash
+brew install lua luarocks stylua
+make tools
+make fmt
+make check
+```
+
+### CI
+
+GitHub Actions runs `make check` on every push and pull request (Lua 5.1 + 5.4). See `.github/workflows/ci.yml`.
+
+### Notes
+
+* `make tools` installs `luacheck` + `busted` into a project-local `.luarocks/` tree (no global installs).
+* `make clean` removes `.luarocks/` and `lua_modules/`.
 
 ## License
 

@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        luaVersion: ["5.1", "5.4"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Lua
+        uses: leafo/gh-actions-lua@v11
+        with:
+          luaVersion: ${{ matrix.luaVersion }}
+
+      - name: Set up LuaRocks
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luaVersion: ${{ matrix.luaVersion }}
+
+      - name: Set up StyLua
+        uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.3.1
+          args: false
+
+      - name: Install Lua tools
+        run: make tools
+
+      - name: Check
+        run: make check
