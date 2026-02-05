@@ -1,2 +1,31 @@
 .luarocks/
 lua_modules/
+
+# Tooling
+.luacheckcache
+.cache/
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+
+# docs (local findings/logs/decisions)
+.vscode/
+DECISIONS.md
+FINDINGS.md
+LOG.md
+REFACTOR_PLAN.md
+PHYSICS_AUDIT.md
+validation.md
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+luacov.*
+
+# Env
+.env

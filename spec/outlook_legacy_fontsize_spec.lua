@@ -1,7 +1,11 @@
 local outlook = require('outlook_legacy_fontsize')
 
-local function make_hs_stub()
-  local calls = { key_strokes = {}, binds = {}, launches = 0 }
+local function make_hs_stub(options)
+  options = options or {}
+  local calls = { key_strokes = {}, binds = {}, launches = 0, do_every = 0, timer_stopped = false }
+  local frontmost_name = options.frontmost_name or 'Microsoft Outlook'
+  local seconds = options.seconds or { 0 }
+  local seconds_index = 1
 
   local hs = {
     application = {
@@ -11,7 +15,7 @@ local function make_hs_stub()
       frontmostApplication = function()
         return {
           name = function()
-            return 'Microsoft Outlook'
+            return frontmost_name
           end,
         }
       end,
@@ -30,10 +34,24 @@ local function make_hs_stub()
     timer = {
       usleep = function() end,
       secondsSinceEpoch = function()
-        return 0
+        local value = seconds[seconds_index] or seconds[#seconds]
+        seconds_index = seconds_index + 1
+        return value
       end,
-      doEvery = function()
-        error('doEvery should not be called when Outlook is already frontmost')
+      doEvery = function(_, fn)
+        if frontmost_name == 'Microsoft Outlook' then
+          error('doEvery should not be called when Outlook is already frontmost')
+        end
+
+        calls.do_every = calls.do_every + 1
+        local timer = {}
+        function timer.stop()
+          calls.timer_stopped = true
+        end
+        function timer.trigger()
+          fn()
+        end
+        return timer
       end,
     },
   }
@@ -65,5 +83,18 @@ describe('outlook_legacy_fontsize', function()
     assert.has_error(function()
       outlook.adjust_font_size(3, nil, hs)
     end)
+  end)
+
+  it('times out when Outlook is never frontmost', function()
+    local hs, calls = make_hs_stub({ frontmost_name = 'Other', seconds = { 0, 6 } })
+    local timer = outlook.adjust_font_size(2, { timeout_seconds = 5 }, hs)
+
+    assert.are.equal(1, calls.launches)
+    assert.are.equal(0, #calls.key_strokes)
+    assert.is_not_nil(timer)
+    assert.are.equal(1, calls.do_every)
+
+    timer:trigger()
+    assert.is_true(calls.timer_stopped)
   end)
 end)

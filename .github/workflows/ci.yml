@@ -4,29 +4,51 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Secret scan
+        run: bash scripts/secret_scan.sh
+
+  osv_scan:
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@2a387edfbe02a11d856b89172f6e978100177eb4 # v2.3.2
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         luaVersion: ["5.1", "5.4"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Lua
-        uses: leafo/gh-actions-lua@v11
+        uses: leafo/gh-actions-lua@8aace3457a2fcf3f3c4e9007ecc6b869ff6d74d6 # v11
         with:
           luaVersion: ${{ matrix.luaVersion }}
 
       - name: Set up LuaRocks
-        uses: leafo/gh-actions-luarocks@v4
+        uses: leafo/gh-actions-luarocks@e65774a6386cb4f24e293dca7fc4ff89165b64c5 # v4
         with:
           luaVersion: ${{ matrix.luaVersion }}
 
       - name: Set up StyLua
-        uses: JohnnyMorganz/stylua-action@v4
+        uses: JohnnyMorganz/stylua-action@479972f01e665acfcba96ada452c36608bdbbb5e # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v2.3.1

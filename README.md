@@ -1,12 +1,12 @@
-> **Deprecated**  
-> This repository is no longer maintained.  
-> Please see our new, actively-maintained version here:  
-> [outlook-for-mac-fontsize-shortcuts](https://github.com/sebastianspicker/outlook-for-mac-fontsize-shortcuts)
-> 
-
 # Outlook Legacy Font Size Hotkeys with Hammerspoon
 
 This project provides a simple, user-friendly way to control the font size in Outlook for Mac (Legacy) using global keyboard shortcuts. It leverages [Hammerspoon](https://www.hammerspoon.org/) to simulate UI interactions and adjust the in-app font slider, giving users a quick two-key shortcut for "Larger" and "Standard" font sizes without digging through menus.
+
+## Features
+
+- Two global hotkeys for **Larger** and **Standard** font sizes.
+- No Outlook plugins or add-ins required.
+- Configurable delays and tab navigation.
 
 ## Problem Statement
 
@@ -29,7 +29,7 @@ This sequence is wrapped in a reusable Lua function, and bound to two hotkeys:
 * `Ctrl + Alt + Cmd + G`: Set font size to *Larger* (`position = 2`).
 * `Ctrl + Alt + Cmd + K`: Set font size to *Standard* (`position = 0`).
 
-## Prerequisites
+## Requirements
 
 * **macOS** (tested on 12.0 Monterey and 13.0 Ventura)
 * **Outlook for Mac (Legacy)** installed and signed in.
@@ -41,7 +41,7 @@ This sequence is wrapped in a reusable Lua function, and bound to two hotkeys:
 * **Accessibility permissions** for Hammerspoon:
   System Settings → Privacy & Security → Accessibility → Enable Hammerspoon.
 
-## Installation
+## Quickstart
 
 1. **Clone** this repository:
 
@@ -90,10 +90,21 @@ outlook.setup({
 
 ## Development
 
+See `docs/RUNBOOK.md` for the full set of commands used in CI and for local verification.
+
 ```bash
 brew install lua luarocks stylua
 make tools
-make fmt
+make lint
+make test
+```
+
+### Testing
+
+```bash
+make lint
+make test
+make fmt-check
 make check
 ```
 
@@ -105,6 +116,12 @@ GitHub Actions runs `make check` on every push and pull request (Lua 5.1 + 5.4).
 
 * `make tools` installs `luacheck` + `busted` into a project-local `.luarocks/` tree (no global installs).
 * `make clean` removes `.luarocks/` and `lua_modules/`.
+
+## Security
+
+- Secret scanning uses `scripts/secret_scan.sh` for high-signal patterns.
+- Dependency scanning runs in CI with OSV-Scanner.
+- Please do not disclose security issues publicly. See `SECURITY.md` for reporting guidance.
 
 ## License
 
