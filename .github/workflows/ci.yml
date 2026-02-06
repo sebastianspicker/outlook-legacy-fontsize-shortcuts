@@ -7,9 +7,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   security:
-    runs-on: ubuntu-latest
+    name: Secret scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     permissions:
       contents: read
     steps:
@@ -19,14 +25,19 @@ jobs:
         run: bash scripts/secret_scan.sh
 
   osv_scan:
+    name: OSV dependency scan
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@2a387edfbe02a11d856b89172f6e978100177eb4 # v2.3.2
+    timeout-minutes: 10
     permissions:
       contents: read
       actions: read
       security-events: write
 
   check:
-    runs-on: ubuntu-latest
+    name: Lua checks (5.1/5.4)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
       contents: read
     strategy:
@@ -54,8 +65,22 @@ jobs:
           version: v2.3.1
           args: false
 
+      - name: Cache LuaRocks
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: |
+            .luarocks
+            lua_modules
+          key: ${{ runner.os }}-luarocks-${{ matrix.luaVersion }}-${{ hashFiles('Makefile') }}
+          restore-keys: |
+            ${{ runner.os }}-luarocks-${{ matrix.luaVersion }}-
+
       - name: Install Lua tools
-        run: make tools
+        run: |
+          set -euo pipefail
+          make tools
 
       - name: Check
-        run: make check
+        run: |
+          set -euo pipefail
+          make check

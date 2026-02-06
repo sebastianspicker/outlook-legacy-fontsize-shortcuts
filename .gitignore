@@ -27,5 +27,19 @@ validation.md
 coverage/
 luacov.*
 
+# Test artifacts
+test-results/
+junit.xml
+*.junit.xml
+
+# Python caches (defensive)
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node artifacts (defensive)
+node_modules/
+dist/
+
 # Env
 .env

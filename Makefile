@@ -6,12 +6,14 @@ LUACHECK := $(BIN)/luacheck
 BUSTED := $(BIN)/busted
 STYLUA ?= stylua
 LUA_FILES := init.lua outlook_legacy_fontsize.lua spec
+LUACHECK_VERSION ?= 1.2.0-1
+BUSTED_VERSION ?= 2.3.0-1
 
 .PHONY: tools lint fmt fmt-check test check clean
 
 tools:
-	$(LUAROCKS) install luacheck
-	$(LUAROCKS) install busted
+	$(LUAROCKS) install luacheck $(LUACHECK_VERSION)
+	$(LUAROCKS) install busted $(BUSTED_VERSION)
 
 lint:
 	$(LUACHECK) .
