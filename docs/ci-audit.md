@@ -33,3 +33,4 @@ No failed workflow runs observed via GitHub Actions API as of 2026-02-06.
 | --- | --- | --- | --- | --- | --- |
 | `ci` | None observed in recent runs | N/A | N/A | N/A | Push/PR run should complete green |
 | `ci` (preventive) | Potential OSV SARIF upload failure on fork PRs | Fork PR tokens are read-only; `security-events: write` may be rejected | Skip OSV job for fork PRs | Reduced OSV coverage for fork PRs | Open a fork PR and confirm OSV job is skipped, others run green |
+| `ci` | Workflow invalid: `timeout-minutes` not allowed on reusable workflow job | `timeout-minutes` is unsupported on jobs that use `uses:` | Remove `timeout-minutes` from `osv_scan` job | None | Validate workflow on push/PR; CI should start successfully |
