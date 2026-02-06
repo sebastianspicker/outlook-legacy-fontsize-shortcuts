@@ -28,7 +28,6 @@ jobs:
     name: OSV dependency scan
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@2a387edfbe02a11d856b89172f6e978100177eb4 # v2.3.2
-    timeout-minutes: 10
     permissions:
       contents: read
       actions: read
