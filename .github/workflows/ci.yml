@@ -53,7 +53,7 @@ jobs:
           luaVersion: ${{ matrix.luaVersion }}
 
       - name: Set up LuaRocks
-        uses: leafo/gh-actions-luarocks@e65774a6386cb4f24e293dca7fc4ff89165b64c5 # v4
+        uses: leafo/gh-actions-luarocks@97053c556d6ce2c8e26eb7ac93743437c7af7248 # v6.0.0
         with:
           luaVersion: ${{ matrix.luaVersion }}
 
