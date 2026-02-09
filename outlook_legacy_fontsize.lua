@@ -5,6 +5,7 @@ local DEFAULTS = {
   right_arrow_count = 2,
   timeout_seconds = 5,
   poll_interval_seconds = 0.1,
+  on_timeout = nil,
   delays_us = {
     prefs_open = 700000,
     arrow = 150000,
@@ -17,7 +18,16 @@ local DEFAULTS = {
 }
 
 local function is_integer(value)
-  return type(value) == 'number' and value % 1 == 0
+  if type(value) ~= 'number' then
+    return false
+  end
+  if value ~= value then
+    return false
+  end
+  if math.huge and math.abs(value) == math.huge then
+    return false
+  end
+  return value % 1 == 0
 end
 
 local function merge_tables(base, override)
@@ -33,10 +43,12 @@ local function merge_tables(base, override)
     return merged
   end
   for key, value in pairs(override) do
-    if type(value) == 'table' and type(merged[key]) == 'table' then
-      merged[key] = merge_tables(merged[key], value)
-    else
-      merged[key] = value
+    if value ~= nil then
+      if type(value) == 'table' and type(merged[key]) == 'table' then
+        merged[key] = merge_tables(merged[key], value)
+      elseif type(merged[key]) ~= 'table' or type(value) == 'table' then
+        merged[key] = value
+      end
     end
   end
   return merged
@@ -61,11 +73,18 @@ local function normalize_config(config)
   return merge_tables(DEFAULTS, config or {})
 end
 
-local function wait_for_frontmost(hs, app_name, poll_interval_seconds, timeout_seconds, on_ready)
+local function noop_timer()
+  return {
+    stop = function() end,
+    trigger = function() end,
+  }
+end
+
+local function wait_for_frontmost(hs, app_name, poll_interval_seconds, timeout_seconds, on_ready, on_timeout)
   local front = hs.application.frontmostApplication()
   if front and front:name() == app_name then
     on_ready()
-    return nil
+    return noop_timer()
   end
 
   local start = hs.timer.secondsSinceEpoch()
@@ -83,6 +102,9 @@ local function wait_for_frontmost(hs, app_name, poll_interval_seconds, timeout_s
     if (hs.timer.secondsSinceEpoch() - start) >= timeout_seconds then
       if timer then
         timer:stop()
+      end
+      if type(on_timeout) == 'function' then
+        on_timeout()
       end
     end
   end)
@@ -117,7 +139,8 @@ function M.adjust_font_size(target_position, config, hs)
       hs.timer.usleep(config.delays_us.slider_set)
 
       hs.eventtap.keyStroke({ 'cmd' }, 'w')
-    end
+    end,
+    config.on_timeout
   )
 end
 
@@ -125,7 +148,14 @@ function M.setup(config, hs)
   hs = require_hs(hs)
   config = normalize_config(config)
 
-  for _, hotkey in pairs(config.hotkeys) do
+  -- Iterate in sorted order for deterministic binding order; callbacks use normalized config snapshot.
+  local hotkey_names = {}
+  for name in pairs(config.hotkeys) do
+    hotkey_names[#hotkey_names + 1] = name
+  end
+  table.sort(hotkey_names)
+  for _, name in ipairs(hotkey_names) do
+    local hotkey = config.hotkeys[name]
     hs.hotkey.bind(hotkey.mods, hotkey.key, function()
       M.adjust_font_size(hotkey.position, config, hs)
     end)

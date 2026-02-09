@@ -61,6 +61,7 @@ This sequence is wrapped in a reusable Lua function, and bound to two hotkeys:
 
 * **Adjust `right_arrow_count`** in `init.lua` if your Outlook Preferences tabs differ in order.
 * **Tweak `delays_us`** in `init.lua` if your system is slower or faster.
+* **Optional `on_timeout`**: pass a function in config; it is called when Outlook does not become frontmost within `timeout_seconds` (e.g. to show a notification).
 * **Verify** tab labels and slider behavior with the macOS Accessibility Inspector if needed.
 
 ## How It Works
