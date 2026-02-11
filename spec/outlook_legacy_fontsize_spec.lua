@@ -101,9 +101,12 @@ describe('outlook_legacy_fontsize', function()
   it('calls on_timeout when timeout is reached', function()
     local hs, _ = make_hs_stub({ frontmost_name = 'Other', seconds = { 0, 6 } })
     local timeout_called = false
-    local timer = outlook.adjust_font_size(2, { timeout_seconds = 5, on_timeout = function()
-      timeout_called = true
-    end }, hs)
+    local timer = outlook.adjust_font_size(2, {
+      timeout_seconds = 5,
+      on_timeout = function()
+        timeout_called = true
+      end,
+    }, hs)
     assert.is_false(timeout_called)
     timer:trigger()
     assert.is_true(timeout_called)
@@ -135,7 +138,10 @@ describe('outlook_legacy_fontsize', function()
   it('setup errors when hotkey position is out of range', function()
     local hs = make_hs_stub()
     assert.has_error(function()
-      outlook.setup({ hotkeys = { larger = { mods = { 'ctrl', 'alt', 'cmd' }, key = 'G', position = 5 } } }, hs)
+      outlook.setup(
+        { hotkeys = { larger = { mods = { 'ctrl', 'alt', 'cmd' }, key = 'G', position = 5 } } },
+        hs
+      )
     end)
   end)
 

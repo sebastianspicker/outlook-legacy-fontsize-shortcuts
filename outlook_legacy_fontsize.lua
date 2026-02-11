@@ -132,7 +132,14 @@ local function noop_timer()
   }
 end
 
-local function wait_for_frontmost(hs, app_name, poll_interval_seconds, timeout_seconds, on_ready, on_timeout)
+local function wait_for_frontmost(
+  hs,
+  app_name,
+  poll_interval_seconds,
+  timeout_seconds,
+  on_ready,
+  on_timeout
+)
   local front = hs.application.frontmostApplication()
   if front and front:name() == app_name then
     on_ready()
