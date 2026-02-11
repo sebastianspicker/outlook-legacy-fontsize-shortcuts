@@ -14,6 +14,7 @@ lua_modules/
 # docs (local findings/logs/decisions)
 .vscode/
 .cursor/
+.codex/
 DECISIONS.md
 FINDINGS.md
 LOG.md

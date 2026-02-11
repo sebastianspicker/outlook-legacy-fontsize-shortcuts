@@ -1,5 +1,7 @@
 # Outlook Legacy Font Size Hotkeys with Hammerspoon
 
+> **Notice:** This repository is provided **as is** and is **no longer actively maintained**. It may stop working with future Outlook or macOS updates. Use at your own risk.
+
 This project provides a simple, user-friendly way to control the font size in Outlook for Mac (Legacy) using global keyboard shortcuts. It leverages [Hammerspoon](https://www.hammerspoon.org/) to simulate UI interactions and adjust the in-app font slider, giving users a quick two-key shortcut for "Larger" and "Standard" font sizes without digging through menus.
 
 ## Features
@@ -91,8 +93,6 @@ outlook.setup({
 
 ## Development
 
-See `docs/RUNBOOK.md` for the full set of commands used in CI and for local verification.
-
 ```bash
 brew install lua luarocks stylua
 make tools
@@ -100,29 +100,11 @@ make lint
 make test
 ```
 
-### Testing
-
-```bash
-make lint
-make test
-make fmt-check
-make check
-```
-
-### CI
-
-GitHub Actions runs `make check` on every push and pull request (Lua 5.1 + 5.4). See `.github/workflows/ci.yml`.
-
-### Notes
-
-* `make tools` installs `luacheck` + `busted` into a project-local `.luarocks/` tree (no global installs).
-* `make clean` removes `.luarocks/` and `lua_modules/`.
+Run `make check` for lint, format check, and tests. `make tools` installs luacheck and busted into a project-local `.luarocks/` tree; `make clean` removes it.
 
 ## Security
 
-- Secret scanning uses `scripts/secret_scan.sh` for high-signal patterns.
-- Dependency scanning runs in CI with OSV-Scanner.
-- Please do not disclose security issues publicly. See `SECURITY.md` for reporting guidance.
+This project is unmaintained. For vulnerability reporting, see `SECURITY.md`.
 
 ## License
 

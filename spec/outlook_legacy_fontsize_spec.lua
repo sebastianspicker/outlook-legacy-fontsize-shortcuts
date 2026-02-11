@@ -124,4 +124,50 @@ describe('outlook_legacy_fontsize', function()
     assert.is_not_nil(result.stop)
     assert.is_not_nil(result.trigger)
   end)
+
+  it('setup errors when hotkey has no position', function()
+    local hs = make_hs_stub()
+    assert.has_error(function()
+      outlook.setup({ hotkeys = { bad = { mods = { 'ctrl' }, key = 'X' } } }, hs)
+    end)
+  end)
+
+  it('setup errors when hotkey position is out of range', function()
+    local hs = make_hs_stub()
+    assert.has_error(function()
+      outlook.setup({ hotkeys = { larger = { mods = { 'ctrl', 'alt', 'cmd' }, key = 'G', position = 5 } } }, hs)
+    end)
+  end)
+
+  it('setup errors when hotkey entry is not a table', function()
+    local hs = make_hs_stub()
+    assert.has_error(function()
+      outlook.setup({ hotkeys = { bad = 'invalid' } }, hs)
+    end)
+  end)
+
+  it('setup errors when outlook_app_name is not a string', function()
+    local hs = make_hs_stub()
+    assert.has_error(function()
+      outlook.setup({ outlook_app_name = 123 }, hs)
+    end)
+  end)
+
+  it('setup errors when delays_us field is not a number', function()
+    local hs = make_hs_stub()
+    assert.has_error(function()
+      outlook.setup({ delays_us = { prefs_open = 'fast' } }, hs)
+    end)
+  end)
+
+  it('setup succeeds with numeric hotkey names (sort uses tostring)', function()
+    local hs, calls = make_hs_stub()
+    outlook.setup({
+      hotkeys = {
+        [1] = { mods = { 'ctrl', 'alt', 'cmd' }, key = 'G', position = 2 },
+        [2] = { mods = { 'ctrl', 'alt', 'cmd' }, key = 'K', position = 0 },
+      },
+    }, hs)
+    assert.are.equal(4, #calls.binds)
+  end)
 end)
